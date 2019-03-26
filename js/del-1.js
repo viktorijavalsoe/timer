@@ -29,9 +29,9 @@ document.querySelector('.report').addEventListener('submit', function(event) {
 
 
   // create a new project array
-  var workDay = [project, activity, start, finish, notes];
+ // var workDay = [project, activity, start, finish, notes];
   
-  /*
+  
   var dayWork = {
     "project" : project,
     "activity": activity,
@@ -40,42 +40,58 @@ document.querySelector('.report').addEventListener('submit', function(event) {
     "finishingHour": finish,
    // "total": totalHours
   };
-  */
-
-  // create a row for every submission
+ 
+  //console.log(Object.values(dayWork)[0]);
+  
+  // create a row for every subission
   var table = document.querySelector('tbody');
   var row = table.insertRow(-1);
 
-  for (var i = 0; i < workDay.length; i++){ 
-    var projectCell = row.insertCell(-1)
-    projectCell.appendChild(document.createTextNode(workDay[i]));
+  for (var i = 0; i < Object.values(dayWork).length; i++){ 
+  var projectCell = row.insertCell(-1);
+  projectCell.appendChild(document.createTextNode(Object.values(dayWork)[i]));
 
   };
-   // add remove button
+  // add remove button
    var remove = document.createElement('button');
    remove.classList.add('action-delete');
    remove.innerHTML = "remove";
    var removeCell = row.insertCell(-1)
    removeCell.appendChild(remove);
-
-   //add edit button
-
-   var edit = document.createElement('button');
-   edit.classList.add('action-edit');
-   edit.innerHTML = "edit";
-   removeCell.appendChild(edit);
-
-
-
+   
+  //add edit button
+  var edit = document.createElement('button');
+  edit.classList.add('action-edit');
+  edit.innerHTML = "edit";
+  removeCell.appendChild(edit);
+  
 });
 
 document.body.addEventListener('click', function(e) {
   var target = e.target;
-  if (target.nodeName === 'button') {
-      alert("hello");
+
+  if (target.classList.contains('action-delete')) {
+    if(confirm('Are you sure you want to delete this log?')){
+      var rows = document.querySelector('table tbody');
+      rows.removeChild(target.parentElement.parentElement);
+    } else {
+      e.stopPropagation();
+    }
   }
-  e.stopPropagation()
+    e.stopPropagation();
 });
+
+  document.body.addEventListener('click', function(e) {
+    var target = e.target;
+    
+    if (target.classList.contains('action-edit')) {
+      var rows = document.querySelector('table tbody');
+      var x = rows.target.parentElement;
+      console.log(x);
+
+    }
+      e.stopPropagation();
+  });    
 
 
 
