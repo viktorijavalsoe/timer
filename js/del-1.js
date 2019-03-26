@@ -97,8 +97,15 @@ document.querySelector('.report').addEventListener('submit', function(event) {
   diff -= hours * 1000 * 60 * 60;
   var minutes = Math.floor(diff / 1000 / 60);
   
-  //var totalHours = (hours < 9 ? "0" : "") + hours + ":" + (minutes < 9 ? "0" : "") + minutes;
-  
+
+  // need to add hours and minutes for each submit
+  var totalhours = "";
+
+  // convert diff result to hh:mm format
+  var totalHours = (hours < 9 ? "0" : "") + hours + ":" + (minutes < 9 ? "0" : "") + minutes;
+  var totalCell = document.querySelector('td[colspan="7"]');
+  totalCell.innerHTML = "Summa total tid:" + totalHours;
+
 });
 
 //delete function
@@ -142,9 +149,6 @@ document.body.addEventListener('click', function(e) {
 
   //add sumbmit button
   buttons.innerHTML = '<input class="action-save" type="submit" name="save" value="save">';
-
-  // 3. När användaren sparar så tas inputs/selects bort och det blir en vanlig <tr> igen
-
   }
     e.stopPropagation();
 }); 
@@ -152,7 +156,6 @@ document.body.addEventListener('click', function(e) {
 document.body.addEventListener('click', function(e){
   var target = e.target;
   if (target.classList.contains('action-save')){
-    //alert ("hello");
     var row = e.target.parentNode.parentNode;
 
     // Fetch all the values from the row
