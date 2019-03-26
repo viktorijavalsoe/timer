@@ -42,7 +42,7 @@ document.querySelector('.report').addEventListener('submit', function(event) {
   };
   */
 
-  // create a row for every subission
+  // create a row for every submission
   var table = document.querySelector('tbody');
   var row = table.insertRow(-1);
 
@@ -57,6 +57,16 @@ document.querySelector('.report').addEventListener('submit', function(event) {
    remove.innerHTML = "remove";
    var removeCell = row.insertCell(-1)
    removeCell.appendChild(remove);
+
+   //add edit button
+
+   var edit = document.createElement('button');
+   edit.classList.add('action-edit');
+   edit.innerHTML = "edit";
+   removeCell.appendChild(edit);
+
+
+
 });
 
 document.body.addEventListener('click', function(e) {
