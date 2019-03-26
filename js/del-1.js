@@ -1,55 +1,76 @@
 document.querySelector('.report').addEventListener('submit', function(event) {
   event.preventDefault();
  // alert('test');
-
-  var project = document.querySelector('select[name=project]').value;
-  //console.log(project);
-
-  var activity = document.querySelector('select[name=activity]').value;
-  //console.log(activity);
-
-  var notes = document.querySelector('textarea[name=note]').value;
-  //console.log(notes);
-
-  var fromInput = document.getElementsByName('from');
-   for(i = 0; i < fromInput.length; i++){
-    var start = fromInput[i].value;
-   // start = parseInt(start);
+ 
+  // fetch project selection value
+  if(document.querySelector('select[name=project]').value === ''){
+    alert("You must select a project!");
+    return false;
+  } else {
+    var project = document.querySelector('select[name=project]').value;
+  }; 
+  
+  //fetch activity selection value
+  if(document.querySelector('select[name=activity]').value === ''){
+    alert("You must select an activity!");
+    return false;
+  } else {
+    var activity = document.querySelector('select[name=activity]').value;
   };
-  //console.log(start);
+  
+  //fetch notes input value
+  var notes = document.querySelector('textarea[name=note]').value;
 
+  //fetch starting hour value
+  var fromInput = document.getElementsByName('from');
+    for(i = 0; i < fromInput.length; i++){
+      var start = fromInput[i].value;
+    };
+   
+  //check if valid format
+  re = /^\d{1,2}:\d{2}([ap]m)?$/;
+ try {
+    start != '' && !start.match(re)
+    }
+    catch(error) {
+      alert("Invalid time format! Please insert hh:mm");
+      return false;
+    };
+   
+ //fetch finishing hour value
   var toInput = document.getElementsByName('to');
     for(i = 0; i < toInput.length; i++){
     var finish = toInput[i].value;
-   // finish = parseInt(finish)
   };
 
-  //var totalHours = finish - start;
-  //console.log(totalHours);
-
-
-  // create a new project array
- // var workDay = [project, activity, start, finish, notes];
+  //check if valid format
+  re = /^\d{1,2}:\d{2}([ap]m)?$/;
+  try {
+    finish != '' && !finish.match(re)
+    }
+    catch(error) {
+      alert("Invalid time format! Please insert hh:mm");
+      return false;
+    };
   
-  
+  //save all input as an object
   var dayWork = {
     "project" : project,
     "activity": activity,
-    "memo": notes,
-    "statingHour": start,
+    "startingHour": start,
     "finishingHour": finish,
+    "memo": notes
    // "total": totalHours
   };
  
-  //console.log(Object.values(dayWork)[0]);
-  
-  // create a row for every subission
+  // create a row for every submission
   var table = document.querySelector('tbody');
   var row = table.insertRow(-1);
-
+  
+  // create cell for every value in the object.
   for (var i = 0; i < Object.values(dayWork).length; i++){ 
   var projectCell = row.insertCell(-1);
-  projectCell.id = Object.keys(dayWork)[i];
+  projectCell.classList.add(Object.keys(dayWork)[i]);
   projectCell.appendChild(document.createTextNode(Object.values(dayWork)[i]));
 
   };
@@ -64,10 +85,25 @@ document.querySelector('.report').addEventListener('submit', function(event) {
   var edit = document.createElement('button');
   edit.classList.add('action-edit');
   edit.innerHTML = "edit";
-  removeCell.appendChild(edit);
+  removeCell.appendChild(edit); 
+
+  //Change time format to string to calculate time difference 
+  start = start.split(":");
+  finish = finish.split(":");
+  var startDate = new Date(0, 0, 0, start[0], start[1], 0);
+  var endDate = new Date(0, 0, 0, finish[0], finish[1], 0);
+  var diff = endDate.getTime() - startDate.getTime();
+  var hours = Math.floor(diff / 1000 / 60 / 60);
+  diff -= hours * 1000 * 60 * 60;
+  var minutes = Math.floor(diff / 1000 / 60);
+  
+  //var totalHours = (hours < 9 ? "0" : "") + hours + ":" + (minutes < 9 ? "0" : "") + minutes;
+  
+  console.log(totalHours);
   
 });
 
+//delete function
 document.body.addEventListener('click', function(e) {
   var target = e.target;
 
@@ -82,14 +118,70 @@ document.body.addEventListener('click', function(e) {
     e.stopPropagation();
 });
 
-  document.body.addEventListener('click', function(e) {
-    var target = e.target;
-    if (target.classList.contains('action-edit')) {
-      var row = e.target.parentNode.parentNode;
-      console.log(row);
+// edit function
+document.body.addEventListener('click', function(e) {
+  var target = e.target;
+
+  // check if button pressed is edit button
+  //if yes select the row it belongs to
+  if (target.classList.contains('action-edit')) {
+  var row = e.target.parentNode.parentNode;
+
+  // Fetch all the values from the row
+  var project = row.querySelector('.project');
+  var activity = row.querySelector('.activity');
+  var start = row.querySelector('.startingHour');
+  var end = row.querySelector('.finishingHour');
+  var memo = row.querySelector('.memo');
+  var buttons = row.lastElementChild;
+
+  // Add input/select in all tds and fill it out with the right value
+  project.innerHTML = '<input type="text" name="project" value="'+project.textContent+'">';
+  activity.innerHTML = '<input type="text" name="activity" value="'+activity.textContent+'">';
+  start.innerHTML = '<input type="text" name="start" value="'+start.textContent+'">';
+  end.innerHTML = '<input type="text" name="end" value="'+end.textContent+'">';
+  memo.innerHTML = '<input type="text" name="memo" value="'+memo.textContent+'">';
+
+  //add sumbmit button
+  buttons.innerHTML = '<input class="action-save" type="submit" name="save" value="save">';
+
+  // 3. När användaren sparar så tas inputs/selects bort och det blir en vanlig <tr> igen
+
+  }
+    e.stopPropagation();
+}); 
+
+document.body.addEventListener('click', function(e){
+  var target = e.target;
+  if (target.classList.contains('action-save')){
+    //alert ("hello");
+    var row = e.target.parentNode.parentNode;
+
+    // Fetch all the values from the row
+    var project = row.querySelector('.project');
+    var activity = row.querySelector('.activity');
+    var start = row.querySelector('.startingHour');
+    var end = row.querySelector('.finishingHour');
+    var memo = row.querySelector('.memo');
+    var buttons = row.lastElementChild;
+
+    // Fetch all the edited values
+    var editedProject = (row.querySelector('input[name = project]').value);
+    var editedActivity = (row.querySelector('input[name = activity]').value);
+    var editedStart = (row.querySelector('input[name = start]').value);
+    var editedEnd = (row.querySelector('input[name = end]').value);
+    var editedMemo = (row.querySelector('input[name = memo]').value);
+
+    // Replace input fields with new value
+    project.innerHTML = editedProject;
+    activity.innerHTML = editedActivity;
+    start.innerHTML = editedStart;
+    end.innerHTML = editedEnd;
+    memo.innerHTML = editedMemo;
+    buttons.innerHTML = '<button class="action-delete">remove</button><button class="action-edit">edit</button>';
     }
       e.stopPropagation();
-  });    
+  });
 
 
 
