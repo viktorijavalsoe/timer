@@ -99,8 +99,6 @@ document.querySelector('.report').addEventListener('submit', function(event) {
   
   //var totalHours = (hours < 9 ? "0" : "") + hours + ":" + (minutes < 9 ? "0" : "") + minutes;
   
-  console.log(totalHours);
-  
 });
 
 //delete function
