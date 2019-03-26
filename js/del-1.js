@@ -49,6 +49,7 @@ document.querySelector('.report').addEventListener('submit', function(event) {
 
   for (var i = 0; i < Object.values(dayWork).length; i++){ 
   var projectCell = row.insertCell(-1);
+  projectCell.id = Object.keys(dayWork)[i];
   projectCell.appendChild(document.createTextNode(Object.values(dayWork)[i]));
 
   };
@@ -83,12 +84,9 @@ document.body.addEventListener('click', function(e) {
 
   document.body.addEventListener('click', function(e) {
     var target = e.target;
-    
     if (target.classList.contains('action-edit')) {
-      var rows = document.querySelector('table tbody');
-      var x = rows.target.parentElement;
-      console.log(x);
-
+      var row = e.target.parentNode.parentNode;
+      console.log(row);
     }
       e.stopPropagation();
   });    
